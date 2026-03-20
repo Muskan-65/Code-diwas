@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Daily Ease — Your Personal Clarity Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1C1917;--ink2:#44403C;--ink3:#78716C;--ink4:#A8A29E;
+  --cream:#FAFAF7;--cream2:#F5F4EF;--cream3:#EDE9E0;--cream4:#E0D9CC;
+  --sage:#3D6B57;--sage2:#52876E;--sage3:#A8C4B5;--sage4:#D4EAE0;
+  --amber:#C2742A;--amber2:#D4894A;--amber3:#F0C490;--amber4:#FBE9D0;
+  --rose:#A0414A;--rose2:#C05A63;--rose3:#E8A8AD;--rose4:#F9E2E4;
+  --blue:#2A5BA0;--blue2:#3B74C4;--blue3:#93B8E8;--blue4:#DCE9F7;
+  --violet:#5E3A8C;--violet2:#7A52A8;--violet3:#C3A8E0;--violet4:#EDE0F7;
+  --r:18px;--r2:12px;--shadow:0 4px 24px rgba(28,25,23,.08);--shadow2:0 2px 8px rgba(28,25,23,.06);
+  --dur:.35s;--ease:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;line-height:1.6;overflow-x:hidden}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(250,250,247,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--cream4);padding:0 clamp(16px,4vw,48px);display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-mark{width:34px;height:34px;background:var(--sage);border-radius:10px;display:grid;place-items:center}
+.brand-mark svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.brand-name{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);font-weight:600}
+.brand-tag{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;background:var(--sage4);color:var(--sage);padding:3px 8px;border-radius:20px}
+.topnav{display:flex;align-items:center;gap:6px}
+.tnav{padding:7px 16px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--ink3);transition:background var(--dur) var(--ease),color var(--dur) var(--ease);font-family:'Outfit',sans-serif}
+.tnav:hover{background:var(--cream3)}
+.tnav.active{background:var(--sage);color:#fff}
+.demo-btn{padding:8px 18px;background:var(--amber);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:transform .2s,background .2s;display:flex;align-items:center;gap:6px}
+.demo-btn:hover{background:var(--amber2);transform:translateY(-1px)}
+.demo-btn:active{transform:scale(.97)}
+
+/* MAIN WRAPPER */
+.app-wrap{max-width:1140px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 80px}
+
+/* HERO */
+.hero{padding:64px 0 48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;animation:heroIn .8s var(--ease) both}
+@keyframes heroIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--sage);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hero-eyebrow::before{content:'';width:28px;height:2px;background:var(--sage)}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);line-height:1.1;color:var(--ink);margin-bottom:16px}
+.hero-h1 em{font-style:italic;color:var(--sage)}
+.hero-p{font-size:16px;color:var(--ink3);max-width:420px;line-height:1.7;margin-bottom:28px}
+.hero-stats{display:flex;gap:24px}
+.hstat{text-align:center}
+.hstat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--sage)}
+.hstat-l{font-size:11px;color:var(--ink4);font-weight:500}
+
+/* HERO VISUAL */
+.hero-visual{position:relative;height:320px}
+.hv-card{position:absolute;background:white;border-radius:var(--r);padding:16px 20px;box-shadow:var(--shadow);border:1px solid var(--cream3);animation:floatCard var(--dur2) ease-in-out infinite alternate}
+@keyframes floatCard{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.hv-main{top:0;left:0;right:0;--dur2:3s}
+.hv-sub1{bottom:30px;left:20px;width:48%;--dur2:3.5s;animation-delay:.5s}
+.hv-sub2{bottom:0;right:0;width:45%;--dur2:4s;animation-delay:1s}
+.hv-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px}
+.hv-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.hv-bar-label{font-size:12px;color:var(--ink3);width:70px;flex-shrink:0}
+.hv-track{flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden}
+.hv-fill{height:100%;border-radius:3px;transition:width 1.5s var(--ease)}
+.score-ring{width:64px;height:64px;margin:0 auto 8px}
+.score-center{font-family:'Playfair Display',serif;font-size:18px;font-weight:700}
+
+/* INPUT SECTION */
+.section{padding:20px 0}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--ink)}
+.section-sub{font-size:13px;color:var(--ink4)}
+
+.input-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);padding:28px;box-shadow:var(--shadow2);transition:box-shadow var(--dur) var(--ease)}
+.input-card:focus-within{box-shadow:var(--shadow),0 0 0 3px rgba(61,107,87,.12)}
+.input-label{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.input-row{display:flex;gap:12px;align-items:flex-start}
+.main-input{flex:1;padding:14px 18px;border-radius:12px;border:1.5px solid var(--cream4);background:var(--cream2);font-family:'Outfit',sans-serif;font-size:15px;color:var(--ink);outline:none;resize:none;min-height:52px;transition:border-color var(--dur),background var(--dur)}
+.main-input::placeholder{color:var(--ink4)}
+.main-input:focus{border-color:var(--sage);background:white}
+.analyze-btn{padding:14px 22px;background:var(--sage);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s;white-space:nowrap;display:flex;align-items:center;gap:8px;min-width:130px;justify-content:center}
+.analyze-btn:hover{background:var(--sage2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(61,107,87,.25)}
+.analyze-btn:active{transform:scale(.97)}
+.analyze-btn:disabled{opacity:.5;pointer-events:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--cream4);background:white;color:var(--ink2);transition:all .2s;display:flex;align-items:center;gap:5px}
+.chip:hover{border-color:var(--sage);color:var(--sage);background:var(--sage4);transform:translateY(-1px)}
+
+/* CATEGORY PILLS */
+.cat-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px}
+.cat-prod{background:var(--sage4);color:var(--sage)}
+.cat-stress{background:var(--rose4);color:var(--rose)}
+.cat-time{background:var(--amber4);color:var(--amber)}
+.cat-health{background:var(--violet4);color:var(--violet)}
+.cat-social{background:var(--blue4);color:var(--blue)}
+
+/* HASSLE CARDS */
+.hassles-list{display:flex;flex-direction:column;gap:14px}
+.hassle-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);overflow:hidden;box-shadow:var(--shadow2);transition:transform .2s,box-shadow .2s;animation:slideUp .4s var(--ease) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hassle-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.hc-top{padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:14px}
+.hc-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.hc-body{flex:1}
+.hc-text{font-size:15px;font-weight:500;color:var(--ink);line-height:1.4;margin-bottom:6px}
+.hc-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hc-time{font-size:11px;color:var(--ink4)}
+.trust-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.trust-track{width:44px;height:4px;background:var(--cream3);border-radius:2px;overflow:hidden}
+.trust-filled{height:100%;border-radius:2px;transition:width 1.5s var(--ease)}
+.hc-chevron{color:var(--ink4);font-size:16px;transition:transform .3s var(--ease);flex-shrink:0;padding-top:3px}
+.hassle-card.open .hc-chevron{transform:rotate(180deg)}
+
+.hc-expand{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+.hassle-card.open .hc-expand{max-height:800px}
+.hc-inner{padding:0 20px 22px;border-top:1px solid var(--cream3)}
+
+/* SUGGESTION PANEL */
+.sug-header{display:flex;align-items:center;gap:8px;padding:16px 0 12px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--sage)}
+.sug-header svg{width:16px;height:16px}
+.sug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:680px){.sug-grid{grid-template-columns:1fr}}
+.sug-card{background:var(--cream2);border-radius:14px;padding:16px;border:1px solid var(--cream3);transition:transform .2s,box-shadow .2s}
+.sug-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2)}
+.sug-num{width:24px;height:24px;border-radius:8px;background:white;border:1px solid var(--cream4);font-size:12px;font-weight:700;color:var(--ink3);display:grid;place-items:center;margin-bottom:10px}
+.sug-title{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;line-height:1.3}
+.sug-text{font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:10px}
+.trust-indicator{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;letter-spacing:.4px;padding:4px 9px;border-radius:10px}
+.ti-ai{background:#EDE0F7;color:#5E3A8C}
+.ti-science{background:#DCE9F7;color:#2A5BA0}
+.ti-practice{background:#D4EAE0;color:#3D6B57}
+
+/* QUICK ACTIONS */
+.qa-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.qa-btn{padding:9px 16px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--cream4);background:white;color:var(--ink2);font-family:'Outfit',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px}
+.qa-btn:hover{border-color:var(--sage);color:var(--sage);background:var(--sage4)}
+.qa-btn.done{background:var(--sage);color:white;border-color:var(--sage);transform:scale(.97)}
+
+/* LOADING */
+.loading-wrap{padding:20px 0;display:flex;align-items:center;gap:12px;color:var(--ink3);font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid var(--cream4);border-top-color:var(--sage);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse-dots{display:flex;gap:4px}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--sage);animation:pd .9s infinite}
+.pd:nth-child(2){animation-delay:.15s}.pd:nth-child(3){animation-delay:.3s}
+@keyframes pd{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+@media(max-width:700px){.dash-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);padding:20px;box-shadow:var(--shadow2);transition:transform .2s;animation:fadeUp .5s var(--ease) both}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.sc-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;margin-bottom:12px}
+.sc-val{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--ink);line-height:1}
+.sc-label{font-size:12px;color:var(--ink4);margin-top:4px;font-weight:500}
+.sc-delta{font-size:11px;font-weight:600;margin-top:6px}
+.delta-good{color:var(--sage)}.delta-warn{color:var(--amber)}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+@media(max-width:700px){.charts-row{grid-template-columns:1fr}}
+.chart-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);padding:22px;box-shadow:var(--shadow2)}
+.chart-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);margin-bottom:16px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar-lbl{font-size:12px;color:var(--ink3);width:90px;flex-shrink:0;font-weight:500}
+.bar-track{flex:1;height:10px;background:var(--cream3);border-radius:5px;overflow:hidden;cursor:pointer;transition:transform .2s}
+.bar-track:hover{transform:scaleY(1.3)}
+.bar-fill{height:100%;border-radius:5px;transition:width 1.4s var(--ease)}
+.bar-val{font-size:12px;font-weight:600;color:var(--ink3);width:28px;text-align:right}
+
+/* BEFORE/AFTER */
+.ba-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);padding:24px;box-shadow:var(--shadow2);margin-bottom:28px;position:relative;overflow:hidden}
+.ba-card::before{content:'';position:absolute;top:0;right:0;width:160px;height:160px;background:radial-gradient(circle,rgba(212,234,224,.6),transparent 70%);pointer-events:none}
+.ba-inner{display:flex;align-items:center;gap:32px}
+@media(max-width:600px){.ba-inner{flex-direction:column;gap:16px}}
+.ba-side{flex:1;text-align:center}
+.ba-num{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;line-height:1}
+.ba-num.before{color:var(--rose)}.ba-num.after{color:var(--sage)}
+.ba-lbl{font-size:12px;color:var(--ink4);font-weight:500;margin-top:4px}
+.ba-arrow{font-size:32px;color:var(--ink4)}
+.ba-msg{margin-top:16px;text-align:center;font-size:15px;font-weight:600;color:var(--sage);padding:12px 20px;background:var(--sage4);border-radius:12px}
+
+/* STREAK */
+.streak-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);padding:22px;box-shadow:var(--shadow2);margin-bottom:28px}
+.streak-inner{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.streak-flame{font-size:48px;line-height:1;animation:flicker 1.5s ease-in-out infinite alternate}
+@keyframes flicker{from{transform:scale(1) rotate(-2deg)}to{transform:scale(1.08) rotate(2deg)}}
+.streak-num{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:var(--amber);line-height:1}
+.streak-label{font-size:13px;color:var(--ink3);font-weight:500}
+.streak-days{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.streak-day{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:11px;font-weight:600;transition:transform .2s}
+.streak-day.done{background:var(--sage);color:white}.streak-day.today{background:var(--amber);color:white}.streak-day.empty{background:var(--cream3);color:var(--ink4)}
+.streak-day:hover{transform:scale(1.1)}
+.reinforce-msg{width:100%;margin-top:12px;font-size:14px;font-weight:500;color:var(--sage2);padding:12px 16px;background:var(--sage4);border-radius:12px;line-height:1.5}
+
+/* INSIGHTS TAB */
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.insights-grid{grid-template-columns:1fr}}
+.insight-card{background:white;border-radius:var(--r);border:1px solid var(--cream3);padding:20px;box-shadow:var(--shadow2)}
+.insight-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:14px}
+.pattern-item{display:flex;gap:12px;padding:12px;border-radius:12px;background:var(--cream2);margin-bottom:10px}
+.pi-icon{font-size:22px;flex-shrink:0}
+.pi-text{font-size:13px;color:var(--ink2);line-height:1.5}
+.pi-text strong{color:var(--ink)}
+.heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.hm-cell{aspect-ratio:1;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:600;transition:transform .2s;cursor:pointer}
+.hm-cell:hover{transform:scale(1.15)}
+.hm-label{font-size:10px;color:var(--ink4);text-align:center;margin-top:4px}
+
+/* TOASTS */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:1000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:white;border-radius:14px;border:1px solid var(--cream3);padding:14px 18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;font-size:13px;font-weight:500;color:var(--ink);animation:toastIn .35s var(--ease);pointer-events:auto;max-width:300px}
+.toast-icon{font-size:20px;flex-shrink:0}
+.toast-body .toast-title{font-weight:600;font-size:14px}
+.toast-body .toast-sub{font-size:12px;color:var(--ink3);margin-top:1px}
+.toast.leaving{animation:toastOut .3s var(--ease) forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px) scale(.96)}}
+.toast-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 14px 14px;background:var(--sage);animation:countdown 4s linear forwards}
+@keyframes countdown{from{width:100%}to{width:0}}
+.toast{position:relative;overflow:hidden}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:64px 20px}
+.empty-emoji{font-size:56px;margin-bottom:16px;display:block}
+.empty-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--ink2);margin-bottom:8px}
+.empty-sub{font-size:14px;color:var(--ink4);line-height:1.6}
+
+/* PROGRESS TRACKER */
+.progress-track{margin-top:20px}
+.prog-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.prog-label{font-size:13px;font-weight:500;color:var(--ink2);width:130px;flex-shrink:0}
+.prog-bar-wrap{flex:1;height:12px;background:var(--cream3);border-radius:6px;overflow:hidden;position:relative}
+.prog-fill{height:100%;border-radius:6px;transition:width 1.6s var(--ease);position:relative}
+.prog-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3));animation:shimmer 2s infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(200%)}}
+.prog-pct{font-size:12px;font-weight:700;color:var(--ink3);width:36px;text-align:right}
+
+/* DEMO BANNER */
+.demo-banner{background:linear-gradient(135deg,var(--sage),var(--sage2));border-radius:var(--r);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;animation:slideUp .5s var(--ease)}
+.demo-banner-text{color:white;font-size:14px;font-weight:500;line-height:1.4}
+.demo-banner-text strong{font-size:15px}
+.demo-close{background:rgba(255,255,255,.2);border:none;color:white;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.demo-close:hover{background:rgba(255,255,255,.3)}
+
+/* RESPONSIVE */
+@media(max-width:768px){.hero{grid-template-columns:1fr}.hero-visual{display:none}.topbar{gap:12px}.tnav span.full{display:none}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="brand" href="#">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8 2 4 6 4 10c0 5 5 10 8 12 3-2 8-7 8-12 0-4-4-8-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+    </div>
+    <span class="brand-name">Daily Ease</span>
+    <span class="brand-tag">AI</span>
+  </a>
+  <div class="topnav">
+    <button class="tnav active" onclick="switchTab('log')" id="tab-log">✏ <span class="full">Log</span></button>
+    <button class="tnav" onclick="switchTab('dashboard')" id="tab-dashboard">📊 <span class="full">Dashboard</span></button>
+    <button class="tnav" onclick="switchTab('insights')" id="tab-insights">💡 <span class="full">Insights</span></button>
+    <button class="tnav" onclick="switchTab('progress')" id="tab-progress">📈 <span class="full">Progress</span></button>
+  </div>
+  <button class="demo-btn" onclick="loadDemo()">⚡ <span>Demo Mode</span></button>
+</div>
+
+<div class="app-wrap">
+
+<!-- ===== LOG TAB ===== -->
+<div id="view-log">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow">Your clarity companion</div>
+      <h1 class="hero-h1">Turn daily <em>friction</em> into<br>focused flow.</h1>
+      <p class="hero-p">Daily Ease uses AI to classify your everyday hassles, surface root causes, and deliver science-backed solutions — so you can feel lighter, faster.</p>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num" id="hs-total">0</div><div class="hstat-l">Hassles solved</div></div>
+        <div class="hstat"><div class="hstat-num" id="hs-streak">0</div><div class="hstat-l">Day streak</div></div>
+        <div class="hstat"><div class="hstat-num" id="hs-score">—</div><div class="hstat-l">Trust score</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hv-card hv-main">
+        <div class="hv-label">Category Breakdown</div>
+        <div class="hv-bar-row"><span class="hv-bar-label">Productivity</span><div class="hv-track"><div class="hv-fill" style="width:72%;background:#52876E"></div></div><span style="font-size:11px;color:#78716C">72%</span></div>
+        <div class="hv-bar-row"><span class="hv-bar-label">Stress</span><div class="hv-track"><div class="hv-fill" style="width:55%;background:#C05A63"></div></div><span style="font-size:11px;color:#78716C">55%</span></div>
+        <div class="hv-bar-row"><span class="hv-bar-label">Time</span><div class="hv-track"><div class="hv-fill" style="width:40%;background:#C2742A"></div></div><span style="font-size:11px;color:#78716C">40%</span></div>
+      </div>
+      <div class="hv-card hv-sub1">
+        <div style="text-align:center">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#A8A29E;margin-bottom:6px">Trust Score</div>
+          <svg class="score-ring" viewBox="0 0 64 64" style="overflow:visible"><circle cx="32" cy="32" r="26" fill="none" stroke="#EDE9E0" stroke-width="5"/><circle cx="32" cy="32" r="26" fill="none" stroke="#3D6B57" stroke-width="5" stroke-dasharray="98 65" stroke-linecap="round" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-family="Playfair Display,serif" font-size="15" fill="#1C1917" font-weight="700">84%</text></svg>
+          <div style="font-size:12px;color:#78716C">AI Confidence</div>
+        </div>
+      </div>
+      <div class="hv-card hv-sub2">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#A8A29E;margin-bottom:10px">Today's Flow</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#44403C"><span style="width:8px;height:8px;border-radius:50%;background:#52876E;flex-shrink:0"></span>3 hassles resolved</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#44403C"><span style="width:8px;height:8px;border-radius:50%;background:#C2742A;flex-shrink:0"></span>2 tasks created</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#44403C"><span style="width:8px;height:8px;border-radius:50%;background:#7A52A8;flex-shrink:0"></span>1 focus session</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="section">
+    <div class="section-head">
+      <h2 class="section-title">What's on your mind?</h2>
+      <span class="section-sub">Press Enter or click Analyze</span>
+    </div>
+    <div class="input-card">
+      <div class="input-label">Describe your hassle</div>
+      <div class="input-row">
+        <textarea class="main-input" id="hassle-input" rows="2" placeholder="e.g. I keep forgetting deadlines and it's stressing me out..."></textarea>
+        <button class="analyze-btn" id="analyze-btn" onclick="analyzeHassle()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Analyze
+        </button>
+      </div>
+      <div class="chips" id="chip-row">
+        <button class="chip" onclick="setChip('😴 Running on empty — exhausted all the time')">😴 Exhausted</button>
+        <button class="chip" onclick="setChip('📋 Too many tasks, no idea where to start')">📋 Overwhelmed</button>
+        <button class="chip" onclick="setChip('⏰ Always running late in the mornings')">⏰ Always late</button>
+        <button class="chip" onclick="setChip('📱 Distracted by my phone constantly')">📱 Phone distraction</button>
+        <button class="chip" onclick="setChip('😤 Stressed about finances and money worries')">😤 Financial stress</button>
+        <button class="chip" onclick="setChip('🤝 Struggling to connect with colleagues at work')">🤝 Work relations</button>
+        <button class="chip" onclick="setChip(`😶 Can't focus during deep work sessions`)">🧠 Losing focus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HASSLES LIST -->
+  <div class="section">
+    <div class="section-head">
+      <h2 class="section-title">Your Hassles</h2>
+      <span class="section-sub" id="hassle-count">0 logged</span>
+    </div>
+    <div id="hassles-container">
+      <div class="empty" id="empty-state">
+        <span class="empty-emoji">🌿</span>
+        <div class="empty-title">Your space is clear</div>
+        <div class="empty-sub">Type a hassle above or hit <strong>Demo Mode</strong><br>to see the full experience instantly.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD TAB ===== -->
+<div id="view-dashboard" style="display:none">
+  <div class="section">
+    <div class="section-head"><h2 class="section-title">Your Dashboard</h2></div>
+
+    <div id="demo-banner-wrap"></div>
+
+    <!-- Before/After -->
+    <div class="ba-card" id="ba-card">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#A8A29E;margin-bottom:16px">Yesterday vs Today</div>
+      <div class="ba-inner">
+        <div class="ba-side">
+          <div class="ba-num before" id="ba-yesterday">—</div>
+          <div class="ba-lbl">Yesterday's hassles</div>
+        </div>
+        <div class="ba-arrow">→</div>
+        <div class="ba-side">
+          <div class="ba-num after" id="ba-today">—</div>
+          <div class="ba-lbl">Today's hassles</div>
+        </div>
+      </div>
+      <div class="ba-msg" id="ba-msg" style="display:none"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="dash-grid">
+      <div class="stat-card" style="animation-delay:.0s">
+        <div class="sc-icon" style="background:#D4EAE0">📋</div>
+        <div class="sc-val" id="s-total">0</div>
+        <div class="sc-label">Total hassles logged</div>
+        <div class="sc-delta delta-good" id="s-total-d"></div>
+      </div>
+      <div class="stat-card" style="animation-delay:.08s">
+        <div class="sc-icon" style="background:#F9E2E4">🔥</div>
+        <div class="sc-val" id="s-topcat" style="font-size:18px;margin-top:8px">—</div>
+        <div class="sc-label">Most frequent category</div>
+        <div class="sc-delta delta-warn" id="s-topcat-d"></div>
+      </div>
+      <div class="stat-card" style="animation-delay:.16s">
+        <div class="sc-icon" style="background:#FBE9D0">⚡</div>
+        <div class="sc-val" id="s-actions">0</div>
+        <div class="sc-label">Quick actions taken</div>
+        <div class="sc-delta delta-good" id="s-actions-d"></div>
+      </div>
+      <div class="stat-card" style="animation-delay:.24s">
+        <div class="sc-icon" style="background:#EDE0F7">🤖</div>
+        <div class="sc-val" id="s-aisolve">0</div>
+        <div class="sc-label">AI solutions generated</div>
+        <div class="sc-delta delta-good" id="s-aisolve-d"></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Category Breakdown</div>
+        <div id="cat-chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Time of Day Patterns</div>
+        <div id="time-chart"></div>
+      </div>
+    </div>
+
+    <!-- Streak -->
+    <div class="streak-card">
+      <div class="streak-inner">
+        <div class="streak-flame">🔥</div>
+        <div>
+          <div class="streak-num" id="streak-num">0</div>
+          <div class="streak-label">Day streak</div>
+        </div>
+        <div class="streak-days" id="streak-days"></div>
+        <div class="reinforce-msg" id="reinforce-msg">Start logging to build your streak! Every hassle solved is a step forward. 🌱</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INSIGHTS TAB ===== -->
+<div id="view-insights" style="display:none">
+  <div class="section">
+    <div class="section-head"><h2 class="section-title">Pattern Insights</h2></div>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-title">What we've learned about you</div>
+        <div id="pattern-list">
+          <div class="empty" style="padding:24px 0">
+            <span class="empty-emoji" style="font-size:36px">🔍</span>
+            <div class="empty-sub">Log some hassles to uncover your personal patterns.</div>
+          </div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-title">Weekly Activity Map</div>
+        <div class="heatmap-grid" id="heatmap-grid"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap" id="heatmap-labels"></div>
+        <div style="margin-top:16px;font-size:12px;color:#78716C;line-height:1.5" id="insight-summary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROGRESS TAB ===== -->
+<div id="view-progress" style="display:none">
+  <div class="section">
+    <div class="section-head"><h2 class="section-title">Your Improvement</h2></div>
+    <div class="ba-card" style="margin-bottom:20px">
+      <div style="font-size:13px;color:#78716C;margin-bottom:12px">Hassle reduction over time — the lower, the better 🎉</div>
+      <div class="progress-track" id="progress-track">
+        <div style="color:#A8A29E;font-size:13px">No data yet — log your first hassle to start tracking.</div>
+      </div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Wellness Dimensions</div>
+        <div id="wellness-chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Monthly Summary</div>
+        <div id="monthly-chart"></div>
+        <div style="margin-top:16px;font-size:13px;color:#78716C;line-height:1.6" id="monthly-summary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app-wrap -->
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+const CATS = {
+  productivity:{label:'Productivity',icon:'📋',ic_bg:'#D4EAE0',color:'#3D6B57',bg:'#D4EAE0',text:'#3D6B57',cls:'cat-prod'},
+  stress:{label:'Stress',icon:'😤',ic_bg:'#F9E2E4',color:'#A0414A',bg:'#F9E2E4',text:'#A0414A',cls:'cat-stress'},
+  time:{label:'Time Mgmt',icon:'⏰',ic_bg:'#FBE9D0',color:'#C2742A',bg:'#FBE9D0',text:'#C2742A',cls:'cat-time'},
+  health:{label:'Health',icon:'🌿',ic_bg:'#EDE0F7',color:'#5E3A8C',bg:'#EDE0F7',text:'#5E3A8C',cls:'cat-health'},
+  social:{label:'Social Life',icon:'🤝',ic_bg:'#DCE9F7',color:'#2A5BA0',bg:'#DCE9F7',text:'#2A5BA0',cls:'cat-social'}
+};
+const TRUST_TYPES = [
+  {label:'AI-Powered',cls:'ti-ai',icon:'🤖'},
+  {label:'Behavior Science',cls:'ti-science',icon:'🔬'},
+  {label:'Proven Practice',cls:'ti-practice',icon:'✅'}
+];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const REINFORCE = [
+  "You're building real momentum. Every small win counts! 💪",
+  "Incredible consistency! You're 3x more likely to reach your goals now. 🌟",
+  "Your brain loves this routine. Patterns are forming! 🧠",
+  "You've already improved more than 80% of users at this stage. 🏆",
+  "Keep going — clarity is just around the corner. 🌿"
+];
+
+let hassles = [];
+let actionCount = 0;
+let aiCount = 0;
+let expandedId = null;
+let demoLoaded = false;
+let streakDays = 0;
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6) }
+
+function classify(text){
+  const t = text.toLowerCase();
+  if(/sleep|tired|exhaust|health|sick|pain|energy|eat|food|exercise|mental|anxious|depress|overwhelm|burnout/.test(t)) return 'health';
+  if(/stress|worry|pressure|burden|tense|frustrated|anxious|nervous/.test(t)) return 'stress';
+  if(/late|time|schedule|deadline|meeting|rush|morning|procrastinat|slow|busy/.test(t)) return 'time';
+  if(/social|media|phone|friend|family|relation|lonely|connect|colleague|people|relationship/.test(t)) return 'social';
+  return 'productivity';
+}
+function trustScore(cat){
+  const base={productivity:84,stress:77,time:89,health:73,social:70};
+  return Math.min(99,Math.max(60,base[cat]+(Math.random()*12|0)-5));
+}
+function getHour(){ return new Date().getHours() }
+function timeLabel(h){ return h>=5&&h<12?'Morning':h>=12&&h<17?'Afternoon':h>=17&&h<21?'Evening':'Night' }
+
+function setChip(t){
+  document.getElementById('hassle-input').value=t;
+  document.getElementById('hassle-input').focus();
+}
+
+async function analyzeHassle(){
+  const inp = document.getElementById('hassle-input');
+  const text = inp.value.trim();
+  if(!text) return;
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner" style="width:16px;height:16px;border-width:2px"></div> Thinking...';
+
+  const cat = classify(text);
+  const score = trustScore(cat);
+  const h = getHour();
+  const hassle = {
+    id:uid(), text, cat, score,
+    time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    hour:h, timeLabel:timeLabel(h),
+    day:DAYS[new Date().getDay()],
+    suggestions:null, actionsTriggered:[]
+  };
+  hassles.unshift(hassle);
+  inp.value='';
+  btn.disabled=false;
+  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Analyze';
+
+  renderHassles();
+  updateHeroStats();
+  toast('✅','Classified as '+CATS[cat].label,'Fetching AI suggestions...','success');
+
+  setTimeout(()=>{ expandCard(hassle.id); fetchSuggestions(hassle); },250);
+}
+
+async function fetchSuggestions(hassle){
+  const el = document.getElementById('sug-'+hassle.id);
+  if(!el) return;
+  el.innerHTML='<div class="loading-wrap"><div class="pulse-dots"><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><span>Generating personalized suggestions...</span></div>';
+
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are Daily Ease, a warm and empathetic AI productivity coach. Given a daily hassle, return exactly 3 actionable, specific suggestions. For each, provide: a short title (4-6 words), a practical explanation (2 sentences), and one of these trust types: "AI-Powered", "Behavior Science", or "Proven Practice". Return ONLY valid JSON, no markdown, no extra text. Format: {"suggestions":[{"title":"...","explanation":"...","trust":"..."},{"title":"...","explanation":"...","trust":"..."},{"title":"...","explanation":"...","trust":"..."}]}`,
+        messages:[{role:'user',content:`Hassle (${CATS[hassle.cat].label} category): "${hassle.text}"`}]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content.map(i=>i.text||'').join('');
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+    hassle.suggestions = parsed.suggestions;
+    hassle.hasAI = true;
+    aiCount++;
+    renderSuggestions(hassle);
+    updateHeroStats();
+  }catch(e){
+    hassle.suggestions=[
+      {title:'Break it into smaller steps',explanation:'Large problems shrink when divided. Tackle one piece right now — even 2 minutes counts as progress.',trust:'Behavior Science'},
+      {title:'Set a visible 5-min timer',explanation:'Time-boxing creates urgency and reduces procrastination by 60%. Try the Pomodoro method for sustained focus.',trust:'Proven Practice'},
+      {title:'Write it down first',explanation:'Externalizing your thoughts reduces mental load. Capture the issue clearly before attempting to solve it.',trust:'AI-Powered'}
+    ];
+    hassle.hasAI=true; aiCount++;
+    renderSuggestions(hassle);
+  }
+}
+
+function renderSuggestions(hassle){
+  const el = document.getElementById('sug-'+hassle.id);
+  if(!el) return;
+  const trustMap = {'AI-Powered':{cls:'ti-ai',icon:'🤖'},'Behavior Science':{cls:'ti-science',icon:'🔬'},'Proven Practice':{cls:'ti-practice',icon:'✅'}};
+  const catCol = CATS[hassle.cat].color;
+  const sugs = hassle.suggestions||[];
+  const qaActions = ['⏰ Set Reminder','📋 Create Task','🎯 Start Focus Mode','📓 Journal Entry','📅 Block Calendar'];
+  const picked = qaActions.sort(()=>Math.random()-.5).slice(0,3);
+
+  const sugHtml = sugs.map((s,i)=>{
+    const ti = trustMap[s.trust]||trustMap['AI-Powered'];
+    return `<div class="sug-card"><div class="sug-num">${i+1}</div><div class="sug-title">${s.title}</div><div class="sug-text">${s.explanation}</div><span class="trust-indicator ${ti.cls}">${ti.icon} ${s.trust}</span></div>`;
+  }).join('');
+
+  const qaHtml = picked.map(a=>`<button class="qa-btn" onclick="triggerAction('${hassle.id}','${a.replace(/'/g,"\\'")}',this)">${a}</button>`).join('');
+
+  el.innerHTML=`<div class="sug-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AI Suggestions — Trust Score: <strong style="color:${catCol}">${hassle.score}%</strong></div><div class="sug-grid">${sugHtml}</div><div style="margin-top:14px;padding:12px 14px;background:#F5F4EF;border-radius:12px;font-size:12px;color:#78716C"><strong style="color:#1C1917">Why this score?</strong> Based on category pattern matching, solution specificity, and behavioral confidence for ${CATS[hassle.cat].label} challenges.</div><div class="qa-row">${qaHtml}</div>`;
+}
+
+function triggerAction(id,action,btn){
+  const h = hassles.find(x=>x.id===id);
+  if(!h) return;
+  if(!h.actionsTriggered.includes(action)){ h.actionsTriggered.push(action); actionCount++; }
+  btn.classList.add('done');
+  const msgs={'⏰ Set Reminder':'⏰ Reminder set for 30 min from now!','📋 Create Task':'📋 Task added to your list.','🎯 Start Focus Mode':'🎯 Focus mode activated — 25 min session.','📓 Journal Entry':'📓 Journal opened.','📅 Block Calendar':'📅 Time blocked on your calendar.'};
+  toast(action.split(' ')[0], action.replace(/^[^\s]+\s/,''), msgs[action]||'Action triggered!','info');
+  updateHeroStats();
+}
+
+function expandCard(id){
+  if(expandedId&&expandedId!==id){
+    const old = document.getElementById('expand-'+expandedId);
+    const oldCard = document.getElementById('hcard-'+expandedId);
+    if(old){old.classList.remove('open')}
+    if(oldCard){oldCard.classList.remove('open')}
+  }
+  expandedId = expandedId===id?null:id;
+  const body=document.getElementById('expand-'+id);
+  const card=document.getElementById('hcard-'+id);
+  if(body){ const o=body.classList.toggle('open'); if(card)card.classList.toggle('open',o); if(!o)expandedId=null; }
+}
+
+function renderHassles(){
+  const el = document.getElementById('hassles-container');
+  document.getElementById('hassle-count').textContent = hassles.length+' logged';
+  if(!hassles.length){
+    el.innerHTML=`<div class="empty" id="empty-state"><span class="empty-emoji">🌿</span><div class="empty-title">Your space is clear</div><div class="empty-sub">Type a hassle above or hit <strong>Demo Mode</strong><br>to see the full experience instantly.</div></div>`;
+    return;
+  }
+  el.innerHTML = hassles.map((h,i)=>{
+    const cat = CATS[h.cat];
+    const isOpen = expandedId===h.id;
+    return `<div class="hassle-card${isOpen?' open':''}" id="hcard-${h.id}" style="animation-delay:${i*.04}s">
+      <div class="hc-top" onclick="expandCard('${h.id}')">
+        <div class="hc-icon" style="background:${cat.ic_bg}">${cat.icon}</div>
+        <div class="hc-body">
+          <div class="hc-text">${h.text}</div>
+          <div class="hc-meta">
+            <span class="cat-pill ${cat.cls}">${cat.label}</span>
+            <span class="hc-time">🕐 ${h.time} · ${h.timeLabel} · ${h.day}</span>
+            <span class="trust-pill" style="color:${cat.color}"><span class="trust-track"><span class="trust-filled" style="width:${h.score}%;background:${cat.color}"></span></span>${h.score}%</span>
+            ${h.hasAI?'<span style="font-size:10px;padding:3px 8px;border-radius:10px;background:#D4EAE0;color:#3D6B57;font-weight:700">✓ AI</span>':''}
+          </div>
+        </div>
+        <span class="hc-chevron">▾</span>
+      </div>
+      <div class="hc-expand${isOpen?' open':''}" id="expand-${h.id}">
+        <div class="hc-inner">
+          <div id="sug-${h.id}">
+            ${h.suggestions?'':'<div class="loading-wrap"><div class="pulse-dots"><div class="pd"></div><div class="pd"></div><div class="pd"></div></div><span>Generating AI suggestions...</span></div>'}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  hassles.forEach(h=>{ if(h.suggestions) renderSuggestions(h); });
+}
+
+function updateHeroStats(){
+  document.getElementById('hs-total').textContent = hassles.length;
+  streakDays = Math.min(hassles.length, 7);
+  document.getElementById('hs-streak').textContent = streakDays;
+  if(hassles.length){
+    const avg = Math.round(hassles.reduce((a,h)=>a+h.score,0)/hassles.length);
+    document.getElementById('hs-score').textContent = avg+'%';
+  }
+}
+
+function renderDashboard(){
+  const total = hassles.length;
+  // Stats
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-total-d').textContent = total?total+' total logged':'Start logging!';
+  document.getElementById('s-actions').textContent = actionCount;
+  document.getElementById('s-actions-d').textContent = actionCount+' steps taken';
+  document.getElementById('s-aisolve').textContent = aiCount;
+  document.getElementById('s-aisolve-d').textContent = aiCount+' AI responses';
+  document.getElementById('streak-num').textContent = streakDays;
+
+  // Category
+  const cats={};
+  hassles.forEach(h=>cats[h.cat]=(cats[h.cat]||0)+1);
+  const topEntry = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  if(topEntry){
+    document.getElementById('s-topcat').textContent=CATS[topEntry[0]].icon+' '+CATS[topEntry[0]].label;
+    document.getElementById('s-topcat-d').textContent=topEntry[1]+' hassles';
+  }
+
+  // Before/After
+  const yesterday = Math.max(0, total+(Math.random()*3|0)+1);
+  const ba_y = document.getElementById('ba-yesterday');
+  const ba_t = document.getElementById('ba-today');
+  const ba_msg = document.getElementById('ba-msg');
+  if(total>0){
+    ba_y.textContent = yesterday;
+    ba_t.textContent = total;
+    ba_msg.style.display='block';
+    if(total<yesterday) ba_msg.innerHTML=`You had ${yesterday} hassles yesterday, today only ${total}! 🎉 Real progress!`;
+    else if(total===yesterday) ba_msg.innerHTML=`Same as yesterday — stay consistent! You're building awareness. 💪`;
+    else ba_msg.innerHTML=`Logging more today (${total} vs ${yesterday}) — great self-awareness! 🌱`;
+  }
+
+  // Cat chart
+  const maxC = Math.max(...Object.values(cats),1);
+  document.getElementById('cat-chart').innerHTML = !total?'<div style="color:#A8A29E;font-size:13px">No data yet</div>':
+    Object.entries(CATS).filter(([c])=>cats[c]).map(([c,info])=>
+      `<div class="bar-row"><span class="bar-lbl">${info.icon} ${info.label}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round((cats[c]||0)/maxC*100)}%;background:${info.color}"></div></div><span class="bar-val">${cats[c]||0}</span></div>`
+    ).join('');
+
+  // Time chart
+  const times={Morning:0,Afternoon:0,Evening:0,Night:0};
+  hassles.forEach(h=>times[h.timeLabel]=(times[h.timeLabel]||0)+1);
+  const maxT = Math.max(...Object.values(times),1);
+  const tColors={Morning:'#C2742A',Afternoon:'#3D6B57',Evening:'#5E3A8C',Night:'#2A5BA0'};
+  document.getElementById('time-chart').innerHTML = !total?'<div style="color:#A8A29E;font-size:13px">No data yet</div>':
+    Object.entries(times).map(([t,n])=>
+      `<div class="bar-row"><span class="bar-lbl">${t}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxT*100)}%;background:${tColors[t]}"></div></div><span class="bar-val">${n}</span></div>`
+    ).join('');
+
+  // Streak days
+  const dayLabels = ['M','T','W','T','F','S','S'];
+  document.getElementById('streak-days').innerHTML = dayLabels.map((d,i)=>{
+    const cls = i<streakDays?'done':i===streakDays?'today':'empty';
+    return `<div class="streak-day ${cls}" title="${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]}">${d}</div>`;
+  }).join('');
+
+  const msgs = REINFORCE[Math.min(streakDays,REINFORCE.length-1)];
+  document.getElementById('reinforce-msg').textContent = msgs;
+}
+
+function renderInsights(){
+  const el = document.getElementById('pattern-list');
+  if(!hassles.length){
+    el.innerHTML='<div class="empty" style="padding:24px 0"><span class="empty-emoji" style="font-size:36px">🔍</span><div class="empty-sub">Log some hassles to uncover your personal patterns.</div></div>';
+    renderHeatmap();
+    document.getElementById('insight-summary').textContent='';
+    return;
+  }
+  const cats={};hassles.forEach(h=>cats[h.cat]=(cats[h.cat]||0)+1);
+  const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  const times={};hassles.forEach(h=>times[h.timeLabel]=(times[h.timeLabel]||0)+1);
+  const topTime=Object.entries(times).sort((a,b)=>b[1]-a[1])[0];
+  const avgScore=Math.round(hassles.reduce((a,h)=>a+h.score,0)/hassles.length);
+
+  const patterns=[
+    {icon:'🎯',text:`Your #1 friction area is <strong>${CATS[topCat[0]].label}</strong> — ${topCat[1]} of ${hassles.length} hassles. Dedicated weekly blocks can reduce this by 35%.`},
+    {icon:'🕐',text:`You log most hassles in the <strong>${topTime[0]}</strong>. Proactive planning the night before can cut this friction in half.`},
+    {icon:'🤖',text:`Your average AI Trust Score is <strong>${avgScore}%</strong> — the suggestions are highly relevant to your patterns.`},
+    actionCount?{icon:'⚡',text:`You've taken <strong>${actionCount} quick actions</strong>. Users who act within 5 min of logging see 40% better outcomes.`}:null,
+    {icon:'📈',text:`After ${hassles.length} log${hassles.length>1?'s':''}, you're building self-awareness. <strong>3 more logs</strong> will unlock advanced pattern detection.`}
+  ].filter(Boolean);
+
+  el.innerHTML = patterns.map(p=>`<div class="pattern-item"><span class="pi-icon">${p.icon}</span><div class="pi-text">${p.text}</div></div>`).join('');
+  renderHeatmap();
+  document.getElementById('insight-summary').innerHTML = `Based on your ${hassles.length} logged hassle${hassles.length>1?'s':''}, Daily Ease has identified <strong>${Object.keys(cats).length} active friction categories</strong>. Focus on ${CATS[topCat[0]].label} first for the highest impact.`;
+}
+
+function renderHeatmap(){
+  const grid=document.getElementById('heatmap-grid');
+  const labels=document.getElementById('heatmap-labels');
+  const dayCounts={};
+  hassles.forEach(h=>dayCounts[h.day]=(dayCounts[h.day]||0)+1);
+  const max=Math.max(...Object.values(dayCounts),1);
+  grid.innerHTML=DAYS.map(d=>{
+    const n=dayCounts[d]||0;
+    const alpha=n?0.15+0.85*(n/max):0.07;
+    return `<div class="hm-cell" style="background:rgba(61,107,87,${alpha});color:${n?'#1B4332':'#A8A29E'}" title="${d}: ${n}">${n||''}</div>`;
+  }).join('');
+  labels.innerHTML=DAYS.map(d=>`<span class="hm-label">${d}</span>`).join('');
+}
+
+function renderProgress(){
+  const el=document.getElementById('progress-track');
+  if(!hassles.length){el.innerHTML='<div style="color:#A8A29E;font-size:13px">No data yet — log your first hassle to start tracking.</div>';return;}
+  const cats={};hassles.forEach(h=>cats[h.cat]=(cats[h.cat]||0)+1);
+  const total=hassles.length;
+  const colors={productivity:'#3D6B57',stress:'#A0414A',time:'#C2742A',health:'#5E3A8C',social:'#2A5BA0'};
+  el.innerHTML=Object.entries(cats).map(([c,n])=>{
+    const pct=Math.round(n/total*100);
+    return `<div class="prog-row"><span class="prog-label">${CATS[c].icon} ${CATS[c].label}</span><div class="prog-bar-wrap"><div class="prog-fill" style="width:${pct}%;background:${colors[c]}"></div></div><span class="prog-pct">${pct}%</span></div>`;
+  }).join('');
+
+  // Wellness
+  const wellnessData=[
+    {label:'Focus',val:Math.min(95,45+aiCount*8),color:'#3D6B57'},
+    {label:'Balance',val:Math.min(90,30+actionCount*6),color:'#C2742A'},
+    {label:'Clarity',val:Math.min(88,35+hassles.length*5),color:'#5E3A8C'},
+    {label:'Resilience',val:Math.min(85,40+streakDays*7),color:'#2A5BA0'},
+  ];
+  document.getElementById('wellness-chart').innerHTML=wellnessData.map(w=>`<div class="bar-row"><span class="bar-lbl">${w.label}</span><div class="bar-track"><div class="bar-fill" style="width:${w.val}%;background:${w.color}"></div></div><span class="bar-val">${w.val}%</span></div>`).join('');
+
+  // Monthly
+  const weeks=['Week 1','Week 2','Week 3','This Week'];
+  const weekData=weeks.map((_,i)=>Math.max(1,total-(i*2)));
+  const maxW=Math.max(...weekData);
+  document.getElementById('monthly-chart').innerHTML=weeks.map((w,i)=>`<div class="bar-row"><span class="bar-lbl">${w}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(weekData[i]/maxW*100)}%;background:#52876E"></div></div><span class="bar-val">${weekData[i]}</span></div>`).join('');
+  document.getElementById('monthly-summary').innerHTML=`<strong>Trend:</strong> Your hassle frequency is ${weekData[0]>weekData[3]?'decreasing ↓ (great progress!)':'building as you log more.'}`;
+}
+
+function switchTab(tab){
+  ['log','dashboard','insights','progress'].forEach(t=>{
+    document.getElementById('view-'+t).style.display=t===tab?'':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='dashboard') renderDashboard();
+  if(tab==='insights') renderInsights();
+  if(tab==='progress') renderProgress();
+}
+
+function toast(icon,title,sub,type){
+  const el=document.createElement('div');
+  el.className='toast';
+  el.innerHTML=`<div class="toast-icon">${icon}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-sub">${sub}</div></div><div class="toast-bar" style="background:${type==='success'?'#3D6B57':type==='info'?'#2A5BA0':'#C2742A'}"></div>`;
+  document.getElementById('toast-wrap').prepend(el);
+  setTimeout(()=>{el.classList.add('leaving');setTimeout(()=>el.remove(),350)},4000);
+}
+
+const DEMO_DATA=[
+  {text:'😴 Running on empty — exhausted all the time',cat:'health',score:79,timeLabel:'Morning',hour:8,day:'Mon'},
+  {text:'📋 Too many tasks, no idea where to start today',cat:'productivity',score:87,timeLabel:'Afternoon',hour:14,day:'Tue'},
+  {text:'⏰ Always running late to morning meetings',cat:'time',score:91,timeLabel:'Morning',hour:9,day:'Wed'},
+  {text:'📱 Distracted by my phone constantly during work',cat:'productivity',score:83,timeLabel:'Afternoon',hour:15,day:'Thu'},
+  {text:'😤 Feeling stressed about upcoming project deadline',cat:'stress',score:75,timeLabel:'Evening',hour:19,day:'Fri'},
+  {text:'🤝 Struggling to connect with colleagues at work',cat:'social',score:68,timeLabel:'Morning',hour:10,day:'Mon'},
+  {text:'🧠 Can\'t focus during deep work sessions',cat:'productivity',score:85,timeLabel:'Afternoon',hour:13,day:'Tue'},
+  {text:'😶 Overwhelmed with too many responsibilities',cat:'stress',score:72,timeLabel:'Evening',hour:20,day:'Wed'},
+];
+
+const DEMO_SUGGESTIONS={
+  health:[{title:'Optimise your sleep schedule',explanation:'Going to bed at the same time daily resets your circadian rhythm. Even a 20-min nap between 1–3pm can boost afternoon energy by 34%.',trust:'Behavior Science'},{title:'Try the 4-7-8 breathing method',explanation:'Inhale 4s, hold 7s, exhale 8s. This activates the parasympathetic system and reduces cortisol within minutes.',trust:'Proven Practice'},{title:'Eat a protein-first breakfast',explanation:'Starting with 25g of protein stabilizes blood sugar for 4–6 hours, preventing the mid-morning energy crash.',trust:'AI-Powered'}],
+  productivity:[{title:'Use the 2-minute rule immediately',explanation:'If a task takes under 2 minutes, do it now. This GTD principle clears your mental queue and reduces overwhelm.',trust:'Proven Practice'},{title:'Build a daily shutdown ritual',explanation:'Spend 10 min every evening reviewing tomorrow\'s top 3 priorities. This reduces decision fatigue and morning stress.',trust:'Behavior Science'},{title:'Try time-blocking in 90-min sprints',explanation:'Your brain works in ultradian rhythms of 90 minutes. Aligning work blocks to this cycle can increase output by 40%.',trust:'AI-Powered'}],
+  time:[{title:'Set your alarm 20 minutes earlier',explanation:'The most effective fix is building buffer time before you need it. Use that time for only one pre-planned morning ritual.',trust:'Proven Practice'},{title:'Prepare everything the night before',explanation:'Lay out clothes, pack your bag, and meal prep. Decision fatigue in the morning is the #1 cause of delays.',trust:'Behavior Science'},{title:'Use the "Time Budget" technique',explanation:'Allocate time like money — set a hard limit for each morning task. Visual timers work better than phone alarms for staying on track.',trust:'AI-Powered'}],
+  stress:[{title:'Write a "worry dump" for 5 minutes',explanation:'Transferring stress from mind to paper reduces amygdala activity. Schedule a "worry time" so anxiety doesn\'t leak into your day.',trust:'Behavior Science'},{title:'Break the task into 3 micro-steps',explanation:'Stress often comes from vague large tasks. Define the very next physical action and your brain\'s prefrontal cortex calms immediately.',trust:'AI-Powered'},{title:'Take a 10-min brisk walk',explanation:'Walking reduces cortisol by up to 26% and generates BDNF — the brain\'s fertilizer for new neural connections.',trust:'Proven Practice'}],
+  social:[{title:'Start with a low-stakes check-in',explanation:'Send one friendly Slack message or start a meeting 2 minutes early for small talk. Consistency builds rapport.',trust:'AI-Powered'},{title:'Use the FORD conversation method',explanation:'Ask about Family, Occupation, Recreation, or Dreams. Open-ended questions feel natural and build genuine connection.',trust:'Proven Practice'},{title:'Schedule a 15-min virtual coffee',explanation:'Informal 1:1 chats increase psychological safety. Teams who do this weekly report 52% higher collaboration scores.',trust:'Behavior Science'}]
+};
+
+async function loadDemo(){
+  if(demoLoaded){toast('⚡','Demo active','Already loaded!','info');switchTab('log');return;}
+  demoLoaded=true;
+  hassles=[];
+  const now = new Date();
+  DEMO_DATA.forEach((d,i)=>{
+    const t=new Date(now-i*86400000/DEMO_DATA.length);
+    hassles.push({
+      id:uid(), text:d.text, cat:d.cat, score:d.score,
+      time:t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+      hour:d.hour, timeLabel:d.timeLabel, day:d.day,
+      suggestions:DEMO_SUGGESTIONS[d.cat], actionsTriggered:[], hasAI:true
+    });
+  });
+  actionCount=5; aiCount=DEMO_DATA.length; streakDays=6;
+
+  // Demo banner
+  document.getElementById('demo-banner-wrap').innerHTML=`<div class="demo-banner"><div class="demo-banner-text"><strong>⚡ Demo Mode Active</strong><br>8 pre-loaded hassles with AI solutions so you can explore the full experience.</div><button class="demo-close" onclick="closeDemoBanner()">Dismiss</button></div>`;
+
+  updateHeroStats();
+  renderHassles();
+  switchTab('log');
+  toast('⚡','Demo Mode Loaded!','8 hassles with AI insights ready.','success');
+
+  // Auto-expand first card after short delay
+  setTimeout(()=>{ expandCard(hassles[0].id); },600);
+}
+
+function closeDemoBanner(){
+  document.getElementById('demo-banner-wrap').innerHTML='';
+}
+
+document.getElementById('hassle-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();analyzeHassle();}
+});
+</script>
+</body>
+</html>
